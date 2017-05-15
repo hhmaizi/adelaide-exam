@@ -3,7 +3,7 @@
 \providecommand\SUPP{F}
 
 \LoadClass[12pt]{article}
-\RequirePackage{color,geometry,fancyhdr,graphicx,lastpage,keyval}
+\RequirePackage{booktabs,color,geometry,fancyhdr,graphicx,lastpage,keyval}
 \geometry{a4paper,top=4cm,bottom=3cm,left=3cm,right=3cm}
 
 \pagestyle{fancy}
@@ -34,12 +34,22 @@
   \bigskip\noindent
   \addtocounter{totalmarks}{\value{marks}}%
   \stepcounter{Nparts}%
-  \textbf{Total marks: \arabic{marks}.}%
+  \textbf{Total marks for this question: \arabic{marks}.}%
   \newcounter{markedpart:\theNparts}
   \setcounter{markedpart:\theNparts}{\numexpr\value{marks}-1\relax}
   \refstepcounter{markedpart:\theNparts}
   \label{markedpart:\theNparts}
   \setcounter{marks}{0}
+}
+
+\newcommand\FAKEMARKS[1]{%
+  \setcounter{marks}{#1}%
+  \addtocounter{totalmarks}{\value{marks}}%
+  \stepcounter{Nparts}%
+  \newcounter{markedpart:\theNparts}%
+  \setcounter{markedpart:\theNparts}{\numexpr\value{marks}-1\relax}%
+  \refstepcounter{markedpart:\theNparts}%
+  \label{markedpart:\theNparts}%
 }
 
 \def\COUNTMARKS{
@@ -52,6 +62,7 @@
   \label{parts:total}
 }
 
+\providecommand\TITLE[1]{\section{#1}}
 
 \newcounter{totalmarks}
 \newcounter{Nparts}
@@ -63,6 +74,7 @@
   \begin{titlepage}
   \setlength\parindent{0pt}
   
+  \vspace*{-10mm}
   \centerline{%
     \IfFileExists{uni-logo.pdf}{\includegraphics{uni-logo}}{%
       \color{red} \textbf{LOGO MISSING}. Download the university logo and call it \texttt{uni-logo.pdf}.%
@@ -74,11 +86,9 @@
   \begin{center}
   \large
   \bfseries
-  \centerline{\if \SUPP T\relax
-    Supplementary
+  \if\SUPP T
+  Replacement/Additional Assessment Examination\par
   \fi
-  Examination for the Degree of \DEGREETYPE{} of Engineering}
-  \bigskip
   \SEMESTER, \YEAR
   \end{center}
   
@@ -95,58 +105,56 @@
   \centerline{\Huge\bfseries\color{red} SOLUTIONS}
   \bigskip
   \fi
-  
-  \begin{flushleft}
-  \begin{tabular}{@{}ll}
-  Official Reading Time: & 10 mins\\
-  Writing Time: & \EXAMTIME\ mins\\
-  Total Duration: & \the\numexpr \EXAMTIME+10\relax\ mins
-  \end{tabular}
-  \end{flushleft}
-  
-  \bigskip
-  
-  
+    
 \makeatletter
 
 \let\@tempa\@empty
 
 \ifcsname r@parts:total\endcsname
 
-\@tempcnta=1\relax
+\@tempcnta=0\relax
 \loop
+  \advance\@tempcnta by 1\relax
   \edef\@tempb{
     \the\@tempcnta & 
-    Answer All Questions & 
     \unexpanded{\the\numexpr}
     \EXAMTIME*\expandafter\expandafter\expandafter\@firstoftwo\csname r@markedpart:\the\@tempcnta\endcsname    
     /\expandafter\expandafter\expandafter\@firstoftwo\csname r@marks:total\endcsname
     \relax\
     mins & 
-    \noexpand\ref{markedpart:\the\@tempcnta} marks \noexpand
+    \noexpand\ref{markedpart:\the\@tempcnta} \noexpand
     \\}
   \expandafter\g@addto@macro\expandafter\@tempa\expandafter{\@tempb}
 
-  \advance\@tempcnta by 1\relax
 \ifnum\@tempcnta <
   \expandafter\expandafter\expandafter
-    \@secondoftwo\csname r@parts:total\endcsname
+    \@firstoftwo\csname r@parts:total\endcsname
 \repeat
 
 \fi
 
 \begin{center}
-\begin{tabular}{@{}llll}
-\bfseries Parts & \bfseries Questions & \bfseries Approx.\ time & \bfseries Marks \\
+\begin{tabular}{@{}rr@{~~}r@{}}
+\toprule
+\multicolumn{2}{@{}r@{~~}}{Official Reading Time\rlap:} & 10 mins \\
+\multicolumn{2}{@{}r@{~~}}{Writing Time\rlap:} & \EXAMTIME\ mins \\
+\multicolumn{2}{@{}r@{~~}}{Total Duration\rlap:} & \the\numexpr \EXAMTIME+10\relax\ mins \\
+\bottomrule
+\\
+\toprule
+Q\rlap. & Approx.\ time & Marks \\
+\midrule
 \@tempa
-\cline{4-4}
-& & & \ref{marks:total} total
+\midrule
+Total\rlap: & \EXAMTIME\ mins & \ref{marks:total} \\
+\bottomrule
 \end{tabular}
 \end{center}
 
 \bigskip
 }{
   \vfill
+  \vspace*{2\baselineskip}
   \centerline{DO NOT COMMENCE WRITING UNTIL INSTRUCTED TO DO SO}
   \end{titlepage}
   \stepcounter{page}
@@ -169,4 +177,8 @@
 \def\EXAMTIME{180}
 \def\YEAR{\the\year}
 
+\usepackage{chngcntr}
+\counterwithin{equation}{section}
+\counterwithin{figure}{section}
+\renewcommand\thefigure{\thesection.\arabic{figure}}
 
