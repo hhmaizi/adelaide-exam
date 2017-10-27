@@ -91,7 +91,7 @@
   \if\SUPP T
   Replacement/Additional Assessment\par
   \fi
-  Examination for the Degree of \ifx\DEGREETYPE\DEGREETYPEB Bachelor\else Master\fi\ of Engineering
+  Examination for the Degree of \ifx\DEGREETYPE\DEGREETYPEB Bachelor\else Master\fi\ of Engineering\par
   \SEMESTER, \YEAR
   \end{center}
   
@@ -115,55 +115,63 @@
 
 }
 
+\newcommand\EXAMCALCS{
+  \let\@tempa\@empty
+  
+  \ifcsname r@parts:total\endcsname
+  
+  \@tempcnta=0\relax
+
+  \loop
+    \advance\@tempcnta by 1\relax
+    \edef\@tempb{
+      \the\@tempcnta & 
+      \unexpanded{\the\numexpr}
+      \EXAMTIME*\expandafter\expandafter\expandafter\@firstoftwo\csname r@markedpart:\the\@tempcnta\endcsname    
+      /\expandafter\expandafter\expandafter\@firstoftwo\csname r@marks:total\endcsname
+      \relax\
+      mins & 
+      \noexpand\ref{markedpart:\the\@tempcnta} \noexpand
+      \\ }
+    \expandafter\g@addto@macro\expandafter\@tempa\expandafter{\@tempb}
+  
+    \ifnum\@tempcnta <
+      \expandafter\expandafter\expandafter
+        \@firstoftwo\csname r@parts:total\endcsname
+  \repeat
+  
+  \fi
+}
+
+\newcommand\EXAMTABLE{
+  \begin{center}
+  \begin{tabular}{@{}rr@{~~}r@{}}
+  \toprule
+  \multicolumn{2}{@{}r@{~~}}{Official Reading Time\rlap:} & 10 mins \\
+  \multicolumn{2}{@{}r@{~~}}{Writing Time\rlap:} & \EXAMTIME\ mins \\
+  \multicolumn{2}{@{}r@{~~}}{Total Duration\rlap:} & \the\numexpr \EXAMTIME+10\relax\ mins \\
+  \bottomrule
+  \\
+  \toprule
+  Q\rlap. & Approx.\ time & Marks \\
+  \midrule
+  \@tempa
+  \midrule
+  Total\rlap: & \EXAMTIME\ mins & \ref{marks:total} \\
+  \bottomrule
+  \end{tabular}
+  \end{center}
+}
+
 \newenvironment{coverpage}{
   \EXAMTITLEOPENING  
   \EXAMHEADING
-  
-\let\@tempa\@empty
-
-\ifcsname r@parts:total\endcsname
-
-\@tempcnta=0\relax
-\loop
-  \advance\@tempcnta by 1\relax
-  \edef\@tempb{
-    \the\@tempcnta & 
-    \unexpanded{\the\numexpr}
-    \EXAMTIME*\expandafter\expandafter\expandafter\@firstoftwo\csname r@markedpart:\the\@tempcnta\endcsname    
-    /\expandafter\expandafter\expandafter\@firstoftwo\csname r@marks:total\endcsname
-    \relax\
-    mins & 
-    \noexpand\ref{markedpart:\the\@tempcnta} \noexpand
-    \\ }
-  \expandafter\g@addto@macro\expandafter\@tempa\expandafter{\@tempb}
-
-  \ifnum\@tempcnta <
-    \expandafter\expandafter\expandafter
-      \@firstoftwo\csname r@parts:total\endcsname
-  \repeat
-
-\fi
-
-\begin{center}
-\begin{tabular}{@{}rr@{~~}r@{}}
-\toprule
-\multicolumn{2}{@{}r@{~~}}{Official Reading Time\rlap:} & 10 mins \\
-\multicolumn{2}{@{}r@{~~}}{Writing Time\rlap:} & \EXAMTIME\ mins \\
-\multicolumn{2}{@{}r@{~~}}{Total Duration\rlap:} & \the\numexpr \EXAMTIME+10\relax\ mins \\
-\bottomrule
-\\
-\toprule
-Q\rlap. & Approx.\ time & Marks \\
-\midrule
-\@tempa
-\midrule
-Total\rlap: & \EXAMTIME\ mins & \ref{marks:total} \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\bigskip
-}{\EXAMTITLECLOSING}
+  \EXAMCALCS
+  \EXAMTABLE
+  \bigskip
+}{
+  \EXAMTITLECLOSING
+}
 
 \newcommand\EXAMTITLEOPENING{
   \begin{titlepage}
