@@ -1,10 +1,14 @@
 
+\ProvidesClass{adelaide-mech-eng-exam}
+
 \providecommand\ANSWERS{F}
 \providecommand\SUPP{F}
+\providecommand\MARGIN{top=4cm,bottom=3cm,left=3cm,right=3cm}
 
 \LoadClass[12pt]{article}
 \RequirePackage{booktabs,color,geometry,fancyhdr,graphicx,lastpage,keyval}
-\geometry{a4paper,top=4cm,bottom=3cm,left=3cm,right=3cm}
+\geometry{a4paper}
+\expandafter\geometry\expandafter{\MARGIN}
 
 \pagestyle{fancy}
 \fancyhead{}{}
@@ -70,10 +74,8 @@
 \newcounter{marks}
 \newcommand\MARKS[1]{\addtocounter{marks}{#1}\hfill\penalty100\hspace*{\fill}\textsc{\fontsize{9}{9}\selectfont [marks:~\oldstylenums{#1}]}\ignorespaces}
 
-\newenvironment{coverpage}{
-  \begin{titlepage}
-  \setlength\parindent{0pt}
-  
+\newcommand\EXAMHEADING{
+
   \vspace*{-10mm}
   \centerline{%
     \IfFileExists{uni-logo.pdf}{\includegraphics{uni-logo}}{%
@@ -87,17 +89,22 @@
   \large
   \bfseries
   \if\SUPP T
-  Replacement/Additional Assessment Examination\par
+  Replacement/Additional Assessment\par
   \fi
+  Examination for the Degree of \ifx\DEGREETYPE\DEGREETYPEB Bachelor\else Master\fi\ of Engineering
   \SEMESTER, \YEAR
   \end{center}
   
   \bigskip
   
-  \centerline{\fbox{\parbox{\linewidth}{\large\bfseries
-  MECH ENG \SUBJECTCODE\ \COURSENAME\\
-  COURSE ID: \COURSEID
-  }}}
+  \centerline{\fbox{\large\bfseries
+  \begin{tabular}{p{0.3\textwidth}@{\quad}p{0.6\textwidth}}
+  COURSE ID: \COURSEID & \COURSENAME \\
+  &
+  \ifx\DEGREETYPE\DEGREETYPEB Undergraduate\else Postgraduate\fi\\
+  & MECH ENG \SUBJECTCODE\ \\
+  \end{tabular}
+  }}
   
   \bigskip
   
@@ -105,9 +112,13 @@
   \centerline{\Huge\bfseries\color{red} SOLUTIONS}
   \bigskip
   \fi
-    
-\makeatletter
 
+}
+
+\newenvironment{coverpage}{
+  \EXAMTITLEOPENING  
+  \EXAMHEADING
+  
 \let\@tempa\@empty
 
 \ifcsname r@parts:total\endcsname
@@ -123,13 +134,13 @@
     \relax\
     mins & 
     \noexpand\ref{markedpart:\the\@tempcnta} \noexpand
-    \\}
+    \\ }
   \expandafter\g@addto@macro\expandafter\@tempa\expandafter{\@tempb}
 
-\ifnum\@tempcnta <
-  \expandafter\expandafter\expandafter
-    \@firstoftwo\csname r@parts:total\endcsname
-\repeat
+  \ifnum\@tempcnta <
+    \expandafter\expandafter\expandafter
+      \@firstoftwo\csname r@parts:total\endcsname
+  \repeat
 
 \fi
 
@@ -152,7 +163,13 @@ Total\rlap: & \EXAMTIME\ mins & \ref{marks:total} \\
 \end{center}
 
 \bigskip
-}{
+}{\EXAMTITLECLOSING}
+
+\newcommand\EXAMTITLEOPENING{
+  \begin{titlepage}
+  \setlength\parindent{0pt}
+}
+\newcommand\EXAMTITLECLOSING{
   \vfill
   \vspace*{2\baselineskip}
   \centerline{DO NOT COMMENCE WRITING UNTIL INSTRUCTED TO DO SO}
@@ -174,6 +191,8 @@ Total\rlap: & \EXAMTIME\ mins & \ref{marks:total} \\
 \def\SUBJECTCODE{[Course code]}
 \def\COURSEID{[Course ID]}
 \def\DEGREETYPE{Bachelor}
+\def\DEGREETYPEB{Bachelor}
+\def\DEGREETYPEM{Master}
 \def\EXAMTIME{180}
 \def\YEAR{\the\year}
 
